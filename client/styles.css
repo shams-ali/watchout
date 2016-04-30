@@ -5,7 +5,9 @@ Feel free to use it if you like. */
 
 
 .scoreboard {
-  color: red;
+  color: black;
+  background: grey;
+  width: 800px;
 }
 
 .whirlingShuriken {

@@ -47,7 +47,7 @@ var svg = d3.select('.board')
   .append('svg')
   .attr('width', 800)
   .attr('height', 550)
-  .style('background-color', 'white');
+  .style('background-color', 'black');
 
 
 
