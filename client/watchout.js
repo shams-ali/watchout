@@ -1,9 +1,10 @@
 /*  #####   Scoring Functions   #####  */
 
 // select current score
-var currentScore = d3.select('.current')
-    .select('span')
-    .text();
+var currentScore = 0;
+
+// select high score
+var highScore = 0;
 
 // increase score
 var increaseScore = function() {
@@ -13,33 +14,50 @@ var increaseScore = function() {
 };
 
 // execute score increase every 100ms
-setInterval(increaseScore, 100);
+setInterval(increaseScore, 1000);
 
-// select high score
-var highScore = d3.select('.highscore')
-    .select('span')
-    .text();
 
 // increase high score
 var increaseHighScore = function() {
   if (currentScore > highScore) {
+    highScore = currentScore;
     d3.select('.highscore')
       .select('span')
-      .text(currentScore);
+      .text(highScore);
   }
 };
 
 // watch current score and increment high score when current passes it
-setInterval(increaseHighScore, 100);
+// setInterval(increaseHighScore, 100);
 
+// select collision count
+var collisionCount = d3.select('.collisions')
+    .select('span')
+    .text();
+
+// increase collision count and reset current score
+var increaseCollisions = function() {
+  increaseHighScore();
+  currentScore = 0;
+  d3.select('.collisions')
+    .select('span')
+    .text(++collisionCount);
+};
+
+
+
+/* #####   Build Board   ##### */
 
 // Build board
 var svg = d3.select('.board')
   .append('svg')
   .attr('width', 800)
   .attr('height', 550)
-  .style('background-color', 'black');
+  .style('background-color', 'white');
 
+
+
+/* #####   Define Asteroids   ##### */
 
 // asteroid dimensions and placements
   // x is horizontal; y is vertical
@@ -75,12 +93,22 @@ asteroids.enter()
   });
 })();
 
+//add class to asteroids
+d3.selectAll('image')
+  .classed('whirlingShuriken', true);
+
+
+/* #####   Define Player   ##### */
+
 // build dot for player
 var player = svg.append('circle')
   .attr('cx', 350)
   .attr('cy', 200)
   .attr('r', 10) 
   .style('fill', 'red');
+
+d3.selectAll('circle')
+  .classed('player', true);
 
 var position = [0, 0];
 
@@ -91,7 +119,7 @@ var ondrag = function() {
   
 };
 
-//set circles position based on internal variable
+//set player position based on internal variable
 var redraw = function() {
   d3.select('circle')
   .attr('cx', position[0])
@@ -103,27 +131,48 @@ d3.behavior.drag()
   .on('drag', ondrag)
   .call(d3.select('circle'));
 
-var collide = function() {
-  var array = [];
-  d3.selectAll('image')
-    .each();
-//find centers of each asteroid
-//find center of circle
-  //check for collision
-  //if collision reset score
-    //update highscore if less than current score
-    //new game
-};
-collide(asteroids);
+
+/* #####   Collision Detection   ##### */
+// var collide = function() {
+//   var array = [];
+//   d3.selectAll('image')
+//     .each();
+// //find centers of each asteroid
+// //find center of circle
+//   //check for collision
+//   //if collision reset score
+//     //update highscore if less than current score
+//     //new game
+// };
+// collide(asteroids);
   
 
-// access x/y coordinates for all asteroids
-asteroids[0].map(x => x.x.animVal.value);
-asteroids[0].map(y => y.y.animVal.value);
-
-// access x/y coordinates for player
-player[0].map(cx => cx.cx.animVal.value);
-player[0].map(yx => yx.yx.animVal.value);
 
 
 
+
+
+var collisions = function() {
+  // var distances = [];
+
+  // access x/y coordinates for all asteroids
+  var asteroidsX = asteroids[0].map(x => x.x.animVal.value);
+  var asteroidsY = asteroids[0].map(y => y.y.animVal.value);
+
+  // access x/y coordinates for player
+  var playerX = player[0].map(cx => cx.cx.animVal.value);
+  var playerY = player[0].map(cy => cy.cy.animVal.value);
+
+  for (var i = 0; i < asteroidsX.length; i++) {
+    var distance = Math.sqrt(Math.pow((asteroidsX[i] - playerX[0]), 2) + Math.pow((asteroidsY[i] - playerY[0]), 2));
+    //fix collisions so it reads it correctly
+    //fix collision so it increments by 1 instead of all at once
+    if (distance < 10) {
+      increaseCollisions();
+    }
+  }
+  // return distances;
+};
+
+
+setInterval(collisions, 1);
