@@ -1,10 +1,8 @@
 /*  #####   Scoring Functions   #####  */
 
-// select current score
 var currentScore = 0;
-
-// select high score
 var highScore = 0;
+var collisionCount = 0;
 
 // increase score
 var increaseScore = function() {
@@ -12,10 +10,6 @@ var increaseScore = function() {
     .select('span')
     .text(++currentScore);
 };
-
-// execute score increase every 100ms
-setInterval(increaseScore, 1000);
-
 
 // increase high score
 var increaseHighScore = function() {
@@ -27,14 +21,6 @@ var increaseHighScore = function() {
   }
 };
 
-// watch current score and increment high score when current passes it
-// setInterval(increaseHighScore, 100);
-
-// select collision count
-var collisionCount = d3.select('.collisions')
-    .select('span')
-    .text();
-
 // increase collision count and reset current score
 var increaseCollisions = function() {
   increaseHighScore();
@@ -43,6 +29,14 @@ var increaseCollisions = function() {
     .select('span')
     .text(++collisionCount);
 };
+
+// increase score every 100ms
+setInterval(increaseScore, 100);
+
+// watch current score and increment when current surpasses it
+setInterval(increaseHighScore, 100);
+
+
 
 
 
@@ -54,6 +48,8 @@ var svg = d3.select('.board')
   .attr('width', 800)
   .attr('height', 550)
   .style('background-color', 'white');
+
+
 
 
 
@@ -82,7 +78,9 @@ asteroids.enter()
 // apply dimensions and placements to asteriods
 (function asteroidAttributes () { 
   asteroids
-  .transition().duration(1000)
+  .classed('whirlingShuriken', true)
+  .transition()
+  .duration(1000)
   .attr('xlink:href', function(d) { return d.asteroid; })
   .attr('x', function(d) { return Math.random() * 800; })
   .attr('y', function(d) { return Math.random() * 550; })
@@ -93,9 +91,8 @@ asteroids.enter()
   });
 })();
 
-//add class to asteroids
-d3.selectAll('image')
-  .classed('whirlingShuriken', true);
+
+
 
 
 /* #####   Define Player   ##### */
@@ -106,9 +103,6 @@ var player = svg.append('circle')
   .attr('cy', 200)
   .attr('r', 10) 
   .style('fill', 'red');
-
-d3.selectAll('circle')
-  .classed('player', true);
 
 var position = [0, 0];
 
@@ -132,25 +126,10 @@ d3.behavior.drag()
   .call(d3.select('circle'));
 
 
+
+
+
 /* #####   Collision Detection   ##### */
-// var collide = function() {
-//   var array = [];
-//   d3.selectAll('image')
-//     .each();
-// //find centers of each asteroid
-// //find center of circle
-//   //check for collision
-//   //if collision reset score
-//     //update highscore if less than current score
-//     //new game
-// };
-// collide(asteroids);
-  
-
-
-
-
-
 
 var collisions = function() {
   // var distances = [];
@@ -165,14 +144,11 @@ var collisions = function() {
 
   for (var i = 0; i < asteroidsX.length; i++) {
     var distance = Math.sqrt(Math.pow((asteroidsX[i] - playerX[0]), 2) + Math.pow((asteroidsY[i] - playerY[0]), 2));
-    //fix collisions so it reads it correctly
-    //fix collision so it increments by 1 instead of all at once
     if (distance < 10) {
       increaseCollisions();
     }
   }
-  // return distances;
 };
 
-
+// check for collisions every 1ms
 setInterval(collisions, 1);
