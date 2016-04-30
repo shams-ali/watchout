@@ -1,6 +1,18 @@
 // start slingin' some d3 here.
 
 
+var currentScore = d3.select('.current')
+    .select('span')
+    .text();
+
+var increaseScore = function() {
+  d3.select('.current')
+    .select('span')
+    .text(++currentScore);
+};
+
+setInterval(increaseScore, 100);
+
 // Build board
 var svg = d3.select('.board')
   .append('svg')
@@ -56,6 +68,7 @@ var position = [0, 0];
 var ondrag = function() {
   position = [d3.event.x, d3.event.y];
   redraw();
+  
 };
 
 //set circles position based on internal variable
@@ -69,6 +82,22 @@ var redraw = function() {
 d3.behavior.drag()
   .on('drag', ondrag)
   .call(d3.select('circle'));
+
+var collide = function() {
+  var array = [];
+  d3.selectAll('image')
+    .each();
+//find centers of each asteroid
+//find center of circle
+  //check for collision
+  //if collision reset score
+    //update highscore if less than current score
+    //new game
+};
+collide(asteroids);
+  
+
+
 
 
 
