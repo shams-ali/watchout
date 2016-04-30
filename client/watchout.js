@@ -1,17 +1,37 @@
-// start slingin' some d3 here.
+/*  #####   Scoring Functions   #####  */
 
-
+// select current score
 var currentScore = d3.select('.current')
     .select('span')
     .text();
 
+// increase score
 var increaseScore = function() {
   d3.select('.current')
     .select('span')
     .text(++currentScore);
 };
 
+// execute score increase every 100ms
 setInterval(increaseScore, 100);
+
+// select high score
+var highScore = d3.select('.highscore')
+    .select('span')
+    .text();
+
+// increase high score
+var increaseHighScore = function() {
+  if (currentScore > highScore) {
+    d3.select('.highscore')
+      .select('span')
+      .text(currentScore);
+  }
+};
+
+// watch current score and increment high score when current passes it
+setInterval(increaseHighScore, 100);
+
 
 // Build board
 var svg = d3.select('.board')
@@ -97,10 +117,13 @@ var collide = function() {
 collide(asteroids);
   
 
+// access x/y coordinates for all asteroids
+asteroids[0].map(x => x.x.animVal.value);
+asteroids[0].map(y => y.y.animVal.value);
 
-
-
-
+// access x/y coordinates for player
+player[0].map(cx => cx.cx.animVal.value);
+player[0].map(yx => yx.yx.animVal.value);
 
 
 
