@@ -1,23 +1,77 @@
 // start slingin' some d3 here.
-var dataArray = [20, 40, 50, 100, 80, 30, 50, 60, 70];
 
-var width = 700;
-var height = 450;
-var perpetrators = 30;
 
-var container = d3.select('body')
+// Build board
+var svg = d3.select('.board')
   .append('svg')
-  .attr('width', width)
-  .attr('height', height);
+  .attr('width', 800)
+  .attr('height', 550)
+  .style('background-color', 'black');
 
-var color = container.select('body')
-  .enter()
-  .append()
-  .style('color', 'black');
-// var bars = canvas.selectAll('rect')
-//   .data(dataArray)
-//   .enter()
-//     .append('rect')
-//     .attr('width', d => d * 10)
-//     .attr('height', 50)
-//     .attr('y', (d, i) => i * 100 );
+
+// asteroid dimensions and placements
+  // x is horizontal; y is vertical
+var jsonAsteroids = [
+  {'asteroid': 'asteroid.png', 'width': 25, 'height': 25},
+  {'asteroid': 'asteroid.png', 'width': 30, 'height': 30},
+  {'asteroid': 'asteroid.png', 'width': 35, 'height': 35},
+  {'asteroid': 'asteroid.png', 'width': 40, 'height': 40},
+  {'asteroid': 'asteroid.png', 'width': 45, 'height': 45},
+  {'asteroid': 'asteroid.png', 'width': 50, 'height': 50},
+  {'asteroid': 'asteroid.png', 'width': 55, 'height': 55},
+  {'asteroid': 'asteroid.png', 'width': 60, 'height': 60},
+  {'asteroid': 'asteroid.png', 'width': 65, 'height': 65},
+  {'asteroid': 'asteroid.png', 'width': 70, 'height': 70}
+];
+
+// associate image with asteroids
+var asteroids = svg.selectAll('image').data(jsonAsteroids);
+asteroids.enter()
+  .append('svg:image');
+
+// apply dimensions and placements to asteriods
+(function asteroidAttributes () { 
+  asteroids
+  .transition().duration(1000)
+  .attr('xlink:href', function(d) { return d.asteroid; })
+  .attr('x', function(d) { return Math.random() * 800; })
+  .attr('y', function(d) { return Math.random() * 550; })
+  .attr('width', function(d) { return d.width; })
+  .attr('height', function(d) { return d.height; })
+  .each('end', function() {
+    asteroidAttributes();
+  });
+})();
+
+// build dot for player
+var player = svg.append('circle')
+  .attr('cx', 350)
+  .attr('cy', 200)
+  .attr('r', 10) 
+  .style('fill', 'red');
+
+var position = [0, 0];
+
+//set internal variable based on mouse position
+var ondrag = function() {
+  position = [d3.event.x, d3.event.y];
+  redraw();
+};
+
+//set circles position based on internal variable
+var redraw = function() {
+  d3.select('circle')
+  .attr('cx', position[0])
+  .attr('cy', position[1]);
+};
+
+//capture mouse drag event
+d3.behavior.drag()
+  .on('drag', ondrag)
+  .call(d3.select('circle'));
+
+
+
+
+
+
