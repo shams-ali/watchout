@@ -76,7 +76,7 @@ asteroids.enter()
   .append('svg:image');
 
 // apply dimensions and placements to asteriods
-(function asteroidAttributes () { 
+(function asteroidAttributes () {
   asteroids
   .classed('whirlingShuriken', true)
   .transition()
@@ -101,7 +101,7 @@ asteroids.enter()
 var player = svg.append('circle')
   .attr('cx', 350)
   .attr('cy', 200)
-  .attr('r', 10) 
+  .attr('r', 10)
   .style('fill', 'red');
 
 var position = [0, 0];
@@ -110,7 +110,7 @@ var position = [0, 0];
 var ondrag = function() {
   position = [d3.event.x, d3.event.y];
   redraw();
-  
+
 };
 
 //set player position based on internal variable
