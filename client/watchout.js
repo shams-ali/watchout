@@ -36,10 +36,6 @@ setInterval(increaseScore, 100);
 // watch current score and increment when current surpasses it
 setInterval(increaseHighScore, 100);
 
-
-
-
-
 /* #####   Build Board   ##### */
 
 // Build board
@@ -48,10 +44,6 @@ var svg = d3.select('.board')
   .attr('width', 800)
   .attr('height', 550)
   .style('background-color', 'black');
-
-
-
-
 
 /* #####   Define Asteroids   ##### */
 
@@ -76,6 +68,7 @@ asteroids.enter()
   .append('svg:image');
 
 // apply dimensions and placements to asteriods
+var enemyRadius = 15;
 (function asteroidAttributes () {
   asteroids
   .classed('whirlingShuriken', true)
@@ -84,6 +77,7 @@ asteroids.enter()
   .attr('xlink:href', function(d) { return d.asteroid; })
   .attr('x', function(d) { return Math.random() * 800; })
   .attr('y', function(d) { return Math.random() * 550; })
+  .attr('r', enemyRadius)
   .attr('width', function(d) { return d.width; })
   .attr('height', function(d) { return d.height; })
   .each('end', function() {
@@ -98,10 +92,11 @@ asteroids.enter()
 /* #####   Define Player   ##### */
 
 // build dot for player
+var playerRadius = 10;
 var player = svg.append('circle')
   .attr('cx', 350)
   .attr('cy', 200)
-  .attr('r', 10)
+  .attr('r', playerRadius)
   .style('fill', 'red');
 
 var position = [0, 0];
@@ -132,22 +127,17 @@ d3.behavior.drag()
 /* #####   Collision Detection   ##### */
 
 var collisions = function() {
-  // var distances = [];
 
-  // access x/y coordinates for all asteroids
-  var asteroidsX = asteroids[0].map(x => x.x.animVal.value);
-  var asteroidsY = asteroids[0].map(y => y.y.animVal.value);
-
-  // access x/y coordinates for player
-  var playerX = player[0].map(cx => cx.cx.animVal.value);
-  var playerY = player[0].map(cy => cy.cy.animVal.value);
-
-  for (var i = 0; i < asteroidsX.length; i++) {
-    var distance = Math.sqrt(Math.pow((asteroidsX[i] - playerX[0]), 2) + Math.pow((asteroidsY[i] - playerY[0]), 2));
-    if (distance < 10) {
+  asteroids.each(function(asteroid) {
+    var enemy = d3.select(this);
+    console.log(enemy.attr('x'));
+    var x = Math.abs(enemy.attr('x') - player.attr('cx'));
+    var y = Math.abs(enemy.attr('y') - player.attr('cy'));
+    var distance = Math.sqrt((x * x) + (y * y));
+    if (distance <= enemyRadius + playerRadius) {
       increaseCollisions();
     }
-  }
+  });
 };
 
 // check for collisions every 1ms
